@@ -58,7 +58,19 @@ if __name__ == '__main__':
             if step % 100 == 0:
                 print(epoch, step, "loss:", float(loss_ce), float(loss_mse))
 
+        total_correct = 0
+        total_num = 0
+        # caculate accuracy
         for x,y in test_db:
+            #logits:batch,10
+            x = tf.reshape(x, [-1, 28 * 28])
+            logits = model(x)
+            soft_logits = tf.nn.softmax(logits, axis=1)
+            index_logits = tf.argmax(soft_logits, axis=1)
+            y_onehot = tf.one_hot(y, depth=10)
+
+            total_correct += tf.reduce_sum( tf.equal(y_onehot,index_logits) )
+            total_num += x.shape[0]
 
 
 
